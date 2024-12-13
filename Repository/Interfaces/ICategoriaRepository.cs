@@ -1,14 +1,13 @@
 ﻿using library_jc_API.Models;
 
-namespace library_jc_API.Repository.Interfaces
+namespace library_jc_API.Repository.Interfaces;
+
+public interface ICategoriaRepository
 {
-    public interface ICategoriaRepository
-    {
-        Task<List<Categoria>> GetAllAsync();
-        Task<Categoria?> GetByIdAsync(int id);
-        Task<Categoria?> CreateAsync(Categoria categoria);
-        Task<Categoria?> UpdateAsync(int id, Categoria categoria);
-        Task<Categoria?> DeleteAsync(int id);
-        Categoria? GetByName(string categoria);
-    }
+    Task<List<Categoria>> GetAllAsync();
+    Task<Categoria?> GetByIdAsync(int id);
+    Task<Categoria?> CreateAsync(Categoria categoria);
+    Task<Categoria?> UpdateAsync(Categoria categoria);
+    Task<Categoria?> DeleteAsync(Categoria categoria);
+    Task<Categoria?> GetByNameAsync(string categoriaName);
 }

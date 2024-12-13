@@ -1,6 +1,8 @@
 using library_jc_API.Data;
 using library_jc_API.Repository;
 using library_jc_API.Repository.Interfaces;
+using library_jc_API.Services;
+using library_jc_API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +18,8 @@ builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IAlunoRepository, AlunoRepository>();
 builder.Services.AddScoped<ILivroRepository, LivroRepository>();
 builder.Services.AddScoped<ILivroEmprestado, LivroEmprestadoRepository>();
+
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 
 builder.Services.AddCors();
 
