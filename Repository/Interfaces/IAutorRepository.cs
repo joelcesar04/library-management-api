@@ -1,15 +1,14 @@
 ﻿using library_jc_API.Dtos.Autor;
 using library_jc_API.Models;
 
-namespace library_jc_API.Repository.Interfaces
+namespace library_jc_API.Repository.Interfaces;
+
+public interface IAutorRepository
 {
-    public interface IAutorRepository
-    {
-        Task<List<Autor>> GetAllAsync();
-        Task<Autor?> GetByIdAsync(int id);
-        Task<Autor?> CreateAsync(Autor autor);
-        Task<Autor?> UpdateAsync(int id, UpdateAutorDto updateDto);
-        Task<Autor?> DeleteAsync(int id);
-        Autor? GetByName(string nome);
-    }
+    Task<IEnumerable<Autor>> GetAllAsync();
+    Task<Autor?> GetByIdAsync(int id);
+    Task<Autor?> CreateAsync(Autor autor);
+    Task<Autor?> UpdateAsync(Autor autor);
+    Task<Autor?> DeleteAsync(Autor autor);
+    Task<Autor?> GetByNameAsync(string nome);
 }

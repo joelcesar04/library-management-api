@@ -4,88 +4,43 @@ using library_jc_API.Models;
 using library_jc_API.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace library_jc_API.Repository
+namespace library_jc_API.Repository;
+
+public class AutorRepository : IAutorRepository
 {
-    public class AutorRepository : IAutorRepository
+    private readonly AppDbContext _context;
+
+    public AutorRepository(AppDbContext context)
     {
-        private readonly AppDbContext _context;
-
-        public AutorRepository(AppDbContext context)
-        {
-            _context = context;
-        }
-        public async Task<List<Autor>> GetAllAsync()
-        {
-            var autores = await _context.Autores.ToListAsync();
-            return autores;
-        }
-
-        public async Task<Autor?> GetByIdAsync(int id)
-        {
-            var autor = await _context.Autores.FindAsync(id);
-
-            if (autor == null)
-                return null!;
-
-            return autor!;
-        }
-
-        public async Task<Autor?> CreateAsync(Autor autorModel)
-        {
-            var autorExists = GetByName(autorModel.Nome);
-
-            if (autorExists != null)
-            {
-                return null;
-            }
-
-            await _context.Autores.AddAsync(autorModel);
-            await _context.SaveChangesAsync();
-
-            return autorModel;
-        }
-
-        public async Task<Autor?> UpdateAsync(int id, UpdateAutorDto updateDto)
-        {
-            var existsAutor = await _context.Autores.FirstOrDefaultAsync(a => a.AutorId == id);
-
-            if (existsAutor == null)
-            {
-                return null;
-            }
-
-            existsAutor.Nome = updateDto.Nome;
-            existsAutor.DataNascimento = updateDto.DataNascimento;
-            existsAutor.Biografia = updateDto.Biografia;
-            existsAutor.PaisOrigem = updateDto.PaisOrigem;
-
-            await _context.SaveChangesAsync();
-
-            return existsAutor;
-        }
-
-        public async Task<Autor?> DeleteAsync(int id)
-        {
-            var autor = await _context.Autores.FirstOrDefaultAsync(a => a.AutorId == id);
-
-            if (autor == null)
-                return null;
-
-            _context.Remove(autor);
-
-            await _context.SaveChangesAsync();
-
-            return autor;
-        }
-
-        public Autor? GetByName(string nome)
-        {
-            var autor = _context.Autores.FirstOrDefault(a => a.Nome.ToLower().Contains(nome.ToLower()));
-
-            if (autor == null)
-                return null;
-
-            return autor;
-        }
+        _context = context;
     }
+    public async Task<IEnumerable<Autor>> GetAllAsync() => await _context.Autores.AsNoTracking().ToListAsync();
+
+    public async Task<Autor?> GetByIdAsync(int id) => await _context.Autores.FirstOrDefaultAsync(c => c.AutorId == id);
+
+    public async Task<Autor?> CreateAsync(Autor autorModel)
+    {
+        await _context.Autores.AddAsync(autorModel);
+        await _context.SaveChangesAsync();
+
+        return autorModel;
+    }
+
+    public async Task<Autor?> UpdateAsync(Autor autor)
+    {
+        _context.Autores.Entry(autor).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+
+        return autor;
+    }
+
+    public async Task<Autor?> DeleteAsync(Autor autor)
+    {
+        _context.Remove(autor);
+        await _context.SaveChangesAsync();
+
+        return autor;
+    }
+
+    public async Task<Autor?> GetByNameAsync(string nome) => await _context.Autores.FirstOrDefaultAsync(a => a.Nome.ToLower().Contains(nome.ToLower()));
 }
