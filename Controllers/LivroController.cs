@@ -1,95 +1,87 @@
 ﻿using library_jc_API.Dtos.Livro;
 using library_jc_API.Mappers;
-using library_jc_API.Models;
-using library_jc_API.Repository.Interfaces;
+using library_jc_API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace library_jc_API.Controllers
+namespace library_jc_API.Controllers;
+
+[Route("api/livro")]
+[ApiController]
+public class LivroController : ControllerBase
 {
-    [Route("api/livro")]
-    [ApiController]
-    public class LivroController : ControllerBase
+    private readonly ILivroService _livroService;
+    private readonly ICategoriaService _categoriaService;
+    private readonly IAutorService _autorService;
+
+    public LivroController(ILivroService livroService, ICategoriaService categoriaService, IAutorService autorService)
     {
-        private readonly ILivroRepository _livroRepository;
-        private readonly ICategoriaRepository _categoriaRepository;
-        private readonly IAutorRepository _autorRepository;
+        _livroService = livroService;
+        _categoriaService = categoriaService;
+        _autorService = autorService;
+    }
 
-        public LivroController(ILivroRepository livroRepository
-            , ICategoriaRepository categoriaRepository
-            , IAutorRepository autorRepository)
-        {
-            _livroRepository = livroRepository;
-            _categoriaRepository = categoriaRepository;
-            _autorRepository = autorRepository;
-        }
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var livros = await _livroService.GetAllAsync();
+        var livrosDto = livros.Select(a => a.ToLivroDto());
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var livros = await _livroRepository.GetAllAsync();
-            var livrosDto = livros.Select(a => a.ToLivroDto());
+        return Ok(livrosDto);
+    }
 
-            return Ok(livrosDto);
-        }
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var livro = await _livroService.GetByIdAsync(id);
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var livro = await _livroRepository.GetByIdAsync(id);
+        if (livro == null)
+            return NotFound();
 
-            if (livro == null)
-                return NotFound();
+        return Ok(livro.ToLivroDto());
+    }
 
-            return Ok(livro.ToLivroDto());
-        }
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateLivroDto livroDto)
+    {
+        var livroExists = _livroService.GetByTitleAsync(livroDto.Titulo);
+        if (livroExists is not null)
+            return BadRequest(new { message = "Já existe um livro com o título informado." });
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateLivroDto livroDto)
-        {
-            var categoria = await _categoriaRepository.GetByIdAsync(livroDto.CategoriaId);
-            if (categoria == null)
-                return NotFound();
+        var categoria = await _categoriaService.GetByIdAsync(livroDto.CategoriaId);
+        if (categoria == null)
+            return NotFound(new { message = "Categoria não encontrada." });
 
-            var autor = await _autorRepository.GetByIdAsync(livroDto.AutorId);
-            if (autor == null)
-                return NotFound();
+        var autor = await _autorService.GetByIdAsync(livroDto.AutorId);
+        if (autor == null)
+            return NotFound(new { message = "Autor não encontrado." });
 
-            var livro = livroDto.ToCreateLivroDto();
-            
-            var livroExists = await _livroRepository.CreateAsync(livro);
+        var livro = livroDto.ToCreateLivroDto();
+        await _livroService.CreateAsync(livro);
 
-            if (livroExists == null)
-            {
-                return BadRequest(new { message = "Livro já existe." });
-            }
+        return CreatedAtAction(nameof(GetById), new { id = livro.LivroId }, livro.ToLivroDto());
+    }
 
-            return CreatedAtAction(nameof(GetById), new { id = livro.LivroId }, livro.ToLivroDto());
-        }
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, UpdateLivroDto livroDto)
+    {
+        var livroModel = livroDto.ToUpdateLivroDto(id);
+        
+        var livro = await _livroService.UpdateAsync(id, livroModel);
 
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, UpdateLivroDto livroDto)
-        {
-            var livroModel = await _livroRepository.GetByIdAsync(id);
+        if (livro == null)
+            return NotFound();
 
-            if (livroModel == null)
-                return NotFound();
+        return Ok(livroModel.ToLivroDtoPartial());
+    }
 
-            livroModel = livroDto.ToUpdateLivroDto(id);
-            
-            await _livroRepository.UpdateAsync(id, livroModel);
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var livro = await _livroService.DeleteAsync(id);
 
-            return Ok(livroModel.ToLivroDtoPartial());
-        }
+        if (livro == null)
+            return NotFound();
 
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var livro = await _livroRepository.DeleteAsync(id);
-
-            if (livro == null)
-                return NotFound();
-
-            return NoContent();
-        }
+        return NoContent();
     }
 }

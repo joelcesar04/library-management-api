@@ -22,6 +22,7 @@ builder.Services.AddScoped<ILivroEmprestado, LivroEmprestadoRepository>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<IAlunoService, AlunoService>();
 builder.Services.AddScoped<IAutorService, AutorService>();
+builder.Services.AddScoped<ILivroService, LivroService>();
 
 builder.Services.AddCors();
 
