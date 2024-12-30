@@ -17,12 +17,13 @@ builder.Services.AddScoped<IAutorRepository, AutorRepository>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IAlunoRepository, AlunoRepository>();
 builder.Services.AddScoped<ILivroRepository, LivroRepository>();
-builder.Services.AddScoped<ILivroEmprestado, LivroEmprestadoRepository>();
+builder.Services.AddScoped<ILivroEmprestadoRepository, LivroEmprestadoRepository>();
 
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<IAlunoService, AlunoService>();
 builder.Services.AddScoped<IAutorService, AutorService>();
 builder.Services.AddScoped<ILivroService, LivroService>();
+builder.Services.AddScoped<ILivroEmprestadoService, LivroEmprestadoService>();
 
 builder.Services.AddCors();
 

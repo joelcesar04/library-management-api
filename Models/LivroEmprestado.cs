@@ -4,11 +4,6 @@ namespace library_jc_API.Models
 {
     public class LivroEmprestado
     {
-        public LivroEmprestado()
-        {
-            DataEmprestimo = DateTime.Now;
-            DataDevolucaoPrevista = DataEmprestimo.AddDays(5);
-        }
         public int LivroEmprestadoId { get; set; }
 
         [Required(ErrorMessage = "O ID do livro é obrigatório.")]
