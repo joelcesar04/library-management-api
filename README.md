@@ -27,7 +27,7 @@ Certifique-se de ter o [SQL Server](https://www.microsoft.com/pt-br/sql-server/s
 1. Clone este repositório:
 
    ```bash
-   git clone https://github.com/SEUUSUARIO/library-management-api.git
+   git clone https://github.com/joelcesar04/library-management-api.git
 
 2. Navegue até o diretório do projeto:
 
