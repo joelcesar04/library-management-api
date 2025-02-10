@@ -16,7 +16,7 @@ public class AlunoRepository : IAlunoRepository
 
     public async Task<IEnumerable<Aluno?>> GetAllAsync() => await _context.Alunos.AsNoTracking().ToListAsync();
 
-    public async Task<Aluno?> GetByMatriculaAsync(int matricula) => await _context.Alunos.FirstOrDefaultAsync(a => a.Matricula == matricula);
+    public async Task<Aluno?> GetByMatriculaAsync(int matricula) => await _context.Alunos.FirstOrDefaultAsync(a => a.Matricula == matricula && a.Ativo);
 
     public async Task<Aluno?> CreateAsync(Aluno aluno)
     {
@@ -41,4 +41,6 @@ public class AlunoRepository : IAlunoRepository
 
         return aluno;
     }
+
+    public async Task<Aluno?> GetByIdAsync(int id) => await _context.Alunos.FirstOrDefaultAsync(a => a.AlunoId == id);
 }

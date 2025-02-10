@@ -49,6 +49,12 @@ public class LivroEmprestadoController : ControllerBase
         if (!livro.Disponivel)
             return BadRequest("O livro selecionado não está disponível para empréstimo no momento.");
 
+        var aluno = await _alunoService.GetByIdAsync(livroEmprestadoDto.AlunoId);
+        if (aluno is null)
+            return NotFound("Aluno não encontrado.");
+        if (!aluno.Ativo)
+            return BadRequest("O aluno selecionado está bloqueado.");
+
         var livrosEmprestados = await _service.PodeEmprestarLivroAsync(livroEmprestadoDto.AlunoId);
         if (livrosEmprestados == false)
             return BadRequest("O aluno já possui dois livros emprestados. É necessário devolver pelo menos um deles antes de solicitar um novo empréstimo.");

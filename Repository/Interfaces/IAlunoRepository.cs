@@ -6,6 +6,7 @@ public interface IAlunoRepository
 {
     Task<IEnumerable<Aluno?>> GetAllAsync();
     Task<Aluno?> GetByMatriculaAsync(int matricula);
+    Task<Aluno?> GetByIdAsync(int id);
     Task<Aluno?> CreateAsync(Aluno aluno);
     Task<Aluno?> UpdateAsync(Aluno aluno);
     Task<Aluno?> DeleteAsync(Aluno aluno);

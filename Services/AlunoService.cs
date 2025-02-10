@@ -14,6 +14,7 @@ public class AlunoService : IAlunoService
     }
     public async Task<IEnumerable<Aluno?>> GetAllAsync() => await _repository.GetAllAsync();
     public async Task<Aluno?> GetByMatriculaAsync(int matricula) => await _repository.GetByMatriculaAsync(matricula);
+    public async Task<Aluno?> GetByIdAsync(int id) => await _repository.GetByIdAsync(id);
     public async Task<Aluno?> CreateAsync(Aluno aluno) => await _repository.CreateAsync(aluno);
     public async Task<Aluno?> UpdateAsync(int matricula, Aluno aluno)
     {
